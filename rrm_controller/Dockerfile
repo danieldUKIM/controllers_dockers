@@ -8,15 +8,35 @@ RUN apt-get install -y python3-numpy
 
 RUN apt-get install -y python3-mysql.connector
 
+RUN apt-get install -y python3-scipy
+
+RUN apt-get install -y python3-pip
+
 RUN apt-get install -y wget
 
 WORKDIR /app
 
 COPY . /app/
 
+RUN pip3 install git+https://github.com/uniflex/uniflex@master
+
+RUN pip3 install git+https://github.com/uniflex/sbi@master
+
+RUN pip3 install git+https://github.com/uniflex/modules/net_linux@master
+
+RUN pip3 install git+https://github.com/uniflex/modules/wifi@master
+
+RUN pip3 install git+https://github.com/danieldUKIM/wifi_flex@master
+
+RUN pip3 install git+https://github.com/wishful-project/pyre@master
+
+RUN pip3 install git+https://github.com/uniflex/app_discovery_pyre@master
+
+RUN pip3 install git+https://github.com/danieldUKIM/rem_backend@master
+
 RUN wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 
-EXPOSE 5555
+EXPOSE 5556
 
-CMD ["python3","test_query.py"]
+CMD ["uniflex-agent", "--config", "/app/config_rrm.yaml", "-v"]

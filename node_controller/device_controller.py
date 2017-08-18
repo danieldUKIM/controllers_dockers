@@ -6,12 +6,12 @@ import time
 from uniflex.core import modules
 from uniflex.core import events
 from uniflex_module_wifi_flex.sensing_events import *
-from rrm_events import *
+from rem_backend.rrm_events import *
 #from uniflex.core.timer import TimerEventSender
 import threading
 import _thread
 from random import randint
-import insert_query
+import rem_backend.insert_query
 import json
 
 __author__ = "Daniel Denkovski"

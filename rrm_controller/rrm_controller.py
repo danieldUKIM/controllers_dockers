@@ -1,6 +1,6 @@
 from uniflex.core import modules
 from uniflex_module_wifi_flex.sensing_events import *
-from rrm_events import *
+from rem_backend.rrm_events import *
 from uniflex.core.timer import TimerEventSender
 from datetime import date, datetime, timedelta
 import time
@@ -8,7 +8,7 @@ import logging
 import math
 import random as rd
 import numpy as np
-import query_data as qd
+import rem_backend.query_data as qd
 import json
 
 __author__ = "Daniel Denkovski, Valentin Rakovic"
