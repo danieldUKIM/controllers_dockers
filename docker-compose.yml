@@ -12,6 +12,8 @@ services:
      - "5557"
     depends_on:
         - "database"
+    stdin_open: true
+    tty: true
     command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "python3","REM_console.py"]
   controller_nodes:
     build: ./node_controller
@@ -21,6 +23,8 @@ services:
      - "5555"
     depends_on:
         - "database"
+    stdin_open: true
+    tty: true
     command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "uniflex-agent", "--config", "/app/config_master.yaml", "-v"]
   controller_rrm:
     build: ./rrm_controller
