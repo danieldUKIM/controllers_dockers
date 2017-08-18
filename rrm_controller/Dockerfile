@@ -14,6 +14,8 @@ RUN apt-get install -y python3-pip
 
 RUN apt-get install -y wget
 
+RUN apt-get install -y git
+
 WORKDIR /app
 
 COPY . /app/

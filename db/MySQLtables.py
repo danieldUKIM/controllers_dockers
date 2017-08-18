@@ -6,7 +6,7 @@ from __future__ import print_function
 import mysql.connector
 from mysql.connector import errorcode
 import json
-import insert_query
+import rem_backend.insert_query
 
 DB_NAME = 'remdb'
 

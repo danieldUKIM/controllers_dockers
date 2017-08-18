@@ -11,3 +11,6 @@ sudo apt-get update
 sudo apt-get install docker-ce -y
 sudo service docker start
 sudo docker run hello-world
+sudo apt install docker-compose -y
+sudo usermod -aG docker ${USER}
+groups $USER

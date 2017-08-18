@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# -*- coding: utf-8 -*-
 
 import rem_backend.query_data as qd
 import rem_backend.propagation_model_estimation as pm
