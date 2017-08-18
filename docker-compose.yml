@@ -1,18 +1,36 @@
-version: '2'
+version: '3'
 services:
   database:
     build: ./db
     environment:
         - MYSQL_ROOT_PASSWORD=rem
-  controller:
-    build: ./db_controller
+  controller_rem:
+    build: ./rem_console
+    environment:
+        - MYSQL_ENV=database
+    ports:
+     - "5557"
+    depends_on:
+        - "database"
+    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "python3","REM_console.py"]
+  controller_nodes:
+    build: ./node_controller
     environment:
         - MYSQL_ENV=database
     ports:
      - "5555"
     depends_on:
         - "database"
-    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "python3","test_query.py"]
+    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "uniflex-agent", "--config", "/app/config_master.yaml", "-v"]
+  controller_rrm:
+    build: ./rrm_controller
+    environment:
+        - MYSQL_ENV=database
+    ports:
+     - "5556"
+    depends_on:
+        - "database"
+    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "uniflex-agent", "--config", "/app/config_rrm.yaml", "-v"]
   broker:
     image: uniflex/broker
     ports:
