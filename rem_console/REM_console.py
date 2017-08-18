@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import query_data as qd
-import propagation_model_estimation as pm
+import rem_backend.query_data as qd
+import rem_backend.propagation_model_estimation as pm
 import threading
 import _thread
 
