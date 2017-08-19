@@ -22,14 +22,6 @@ COPY . /app/
 
 RUN pip3 install git+https://github.com/uniflex/uniflex@master
 
-RUN pip3 install git+https://github.com/uniflex/sbi@master
-
-RUN pip3 install git+https://github.com/uniflex/module_net_linux@master
-
-RUN pip3 install git+https://github.com/uniflex/module_wifi@master
-
-RUN pip3 install git+https://github.com/danieldUKIM/wifi_flex@master
-
 RUN pip3 install git+https://github.com/wishful-project/pyre@master
 
 RUN pip3 install git+https://github.com/uniflex/app_discovery_pyre@master

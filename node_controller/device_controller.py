@@ -5,7 +5,7 @@ from datetime import date, datetime, timedelta
 import time
 from uniflex.core import modules
 from uniflex.core import events
-from uniflex_module_wifi_flex.sensing_events import *
+from rem_backend.sensing_events import *
 from rem_backend.rrm_events import *
 #from uniflex.core.timer import TimerEventSender
 import threading
