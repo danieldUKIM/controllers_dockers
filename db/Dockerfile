@@ -18,8 +18,6 @@ RUN pip3 install git+https://github.com/uniflex/uniflex@master
 
 RUN pip3 install git+https://github.com/danieldUKIM/rem_backend@master
 
-COPY MySQLtables.py /docker-entrypoint-initdb.d/
-
-COPY device_locations.txt /docker-entrypoint-initdb.d/
+COPY MySQLtables.py /app/
 
 COPY start.sh /docker-entrypoint-initdb.d/

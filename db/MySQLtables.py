@@ -6,7 +6,7 @@ from __future__ import print_function
 import mysql.connector
 from mysql.connector import errorcode
 import json
-import rem_backend.insert_query
+import rem_backend.insert_query as insert_query
 
 DB_NAME = 'remdb'
 
@@ -176,7 +176,7 @@ for name, ddl in TABLES.items():
     else:
         print("OK")
 
-with open('device_locations.txt', 'r') as myfile:
+with open('/app/device_locations.txt', 'r') as myfile:
 	data=myfile.read()
 	obj = json.loads(data)
 	for gloloc in obj['global_locations']:
