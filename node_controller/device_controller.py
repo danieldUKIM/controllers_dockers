@@ -135,7 +135,6 @@ class DeviceController(modules.ControlApplication):
 		mythread = threading.Thread(target=self.main_menu)
 		#mythread.daemon = True
 		mythread.start()
-		self.initialize_devices_in_db()
 		insert_query.device_init()
 
 	@modules.on_exit()
@@ -312,21 +311,3 @@ class DeviceController(modules.ControlApplication):
 	def serve_rrm_reconfigure_ap_event(self, event):
 		self.setup_wifi_ap(event.macaddr, event.ssid, event.power, event.channel, event.hw_mode, event.ht_capab)
 
-	def initialize_devices_in_db():
-		with open('device_locations.txt', 'r') as myfile:
-			data=myfile.read()
-			obj = json.loads(data)
-			for gloloc in obj['global_locations']:
-				loc = obj['global_locations'][gloloc]['coordinates']
-				location_data = (gloloc, loc[0], loc[1], loc[2])
-				locid = insert_query.insert_global_location(location_data)
-				obj['global_locations'][gloloc]['loc_id'] = locid
-				print(locid)
-				print(obj['global_locations'])
-
-			for device in obj['devices']:
-				locloc = obj['devices'][device]['coordinates']
-				floor = obj['devices'][device]['floor']
-				locid = obj['global_locations'][obj['devices'][device]['global_loc_name']]['loc_id']
-				device_data = (device, locloc[0], locloc[1], locloc[2], locid, floor, 0)
-				insert_query.insert_device_location(device_data)

@@ -16,6 +16,8 @@ RUN apt-get install -y wget
 
 RUN apt-get install -y git
 
+ENV LANG C.UTF-8
+
 WORKDIR /app
 
 COPY . /app/
