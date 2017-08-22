@@ -6,6 +6,11 @@ services:
     build: ./db
     environment:
      - MYSQL_ROOT_PASSWORD=rem
+    ports: 
+     - "3306:3306"
+    networks:
+      wishrem:
+        ipv4_address: 10.5.0.5
 
   controller_init:
     container_name: wishrem_init
@@ -15,6 +20,9 @@ services:
     depends_on:
      - "database"
     command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "python3", "init_devices.py"]
+    networks:
+      wishrem:
+        ipv4_address: 10.5.0.6
 
   controller_rem:
     container_name: wishrem_rem
@@ -26,6 +34,9 @@ services:
     stdin_open: true
     tty: true
     command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "python3", "REM_console.py"]
+    networks:
+      wishrem:
+        ipv4_address: 10.5.0.7
 
   controller_nodes:
     container_name: wishrem_nodes
@@ -37,7 +48,6 @@ services:
     stdin_open: true
     tty: true
     command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "uniflex-agent", "--config", "/app/config_master.yaml"]
-#    network_mode: "host"
     networks:
       wishrem:
         ipv4_address: 10.5.0.3
@@ -50,7 +60,6 @@ services:
     depends_on:
      - "database"
     command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "uniflex-agent", "--config", "/app/config_rrm.yaml"]
-#    network_mode: "host"
     networks:
       wishrem:
         ipv4_address: 10.5.0.4
@@ -64,7 +73,6 @@ services:
     expose:
      - "8989"
      - "8990"
-#    network_mode: "host"
     command: ["uniflex-broker", "--xpub", "tcp://0.0.0.0:8990", "--xsub", "tcp://0.0.0.0:8989", "-v"]
     networks:
       wishrem:
