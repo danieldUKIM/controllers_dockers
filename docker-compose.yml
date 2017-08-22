@@ -1,17 +1,23 @@
 version: '2'
+
 services:
   database:
+    container_name: wishrem_mysql
     build: ./db
     environment:
      - MYSQL_ROOT_PASSWORD=rem
+
   controller_init:
+    container_name: wishrem_init
     build: ./init_device_locations
     environment:
      - MYSQL_ENV=database
     depends_on:
      - "database"
-    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "python3","init_devices.py"]
+    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "python3", "init_devices.py"]
+
   controller_rem:
+    container_name: wishrem_rem
     build: ./rem_console
     environment:
      - MYSQL_ENV=database
@@ -19,8 +25,10 @@ services:
      - "database"
     stdin_open: true
     tty: true
-    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "python3","REM_console.py"]
+    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "python3", "REM_console.py"]
+
   controller_nodes:
+    container_name: wishrem_nodes
     build: ./node_controller
     environment:
      - MYSQL_ENV=database
@@ -29,16 +37,26 @@ services:
     stdin_open: true
     tty: true
     command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "uniflex-agent", "--config", "/app/config_master.yaml"]
-    network_mode: "host"
+#    network_mode: "host"
+    networks:
+      wishrem:
+        ipv4_address: 10.5.0.3
+
   controller_rrm:
+    container_name: wishrem_rrm
     build: ./rrm_controller
     environment:
      - MYSQL_ENV=database
     depends_on:
      - "database"
     command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "uniflex-agent", "--config", "/app/config_rrm.yaml"]
-    network_mode: "host"
+#    network_mode: "host"
+    networks:
+      wishrem:
+        ipv4_address: 10.5.0.4
+
   broker:
+    container_name: wishrem_broker
     image: uniflex/broker
     ports:
      - "8989:8989"
@@ -46,4 +64,16 @@ services:
     expose:
      - "8989"
      - "8990"
-    network_mode: "host"
+#    network_mode: "host"
+    command: ["uniflex-broker", "--xpub", "tcp://0.0.0.0:8990", "--xsub", "tcp://0.0.0.0:8989", "-v"]
+    networks:
+      wishrem:
+        ipv4_address: 10.5.0.2
+
+networks:
+  wishrem:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1

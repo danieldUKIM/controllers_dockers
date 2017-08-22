@@ -6,8 +6,8 @@ config:
   iface: 'lo'
 ##  type: 'slave'
 ##  iface: 'ens33'
-  sub: "tcp://127.0.0.1:8990"
-  pub: "tcp://127.0.0.1:8989"
+  sub: "tcp://10.5.0.2:8990"
+  pub: "tcp://10.5.0.2:8989"
 
 #broker:
 #  xpub: "tcp://127.0.0.1:8990"
