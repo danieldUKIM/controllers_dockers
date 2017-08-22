@@ -29,6 +29,4 @@ RUN pip3 install git+https://github.com/danieldUKIM/rem_backend@master
 RUN wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 
-EXPOSE 5557
-
 CMD ["python3","REM_console.py"]

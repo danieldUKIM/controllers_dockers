@@ -33,6 +33,4 @@ RUN pip3 install git+https://github.com/danieldUKIM/rem_backend@master
 RUN wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 
-EXPOSE 5555 8989 8990
-
-CMD ["uniflex-agent", "--config", "/app/config_master.yaml", "-v"]
+CMD ["uniflex-agent", "--config", "/app/config_master.yaml"]
