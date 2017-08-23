@@ -303,7 +303,7 @@ class DeviceController(modules.ControlApplication):
 
 	@modules.on_event(RRMRegister)
 	def serve_rrm_register_event(self, event):
-		#print("RRMRegister")
+		print("RRMRegister")
 		receiver = event.node
 		self.myrrm_uuid = receiver.uuid
 

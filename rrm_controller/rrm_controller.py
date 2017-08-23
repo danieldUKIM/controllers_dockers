@@ -23,7 +23,7 @@ class RRMController(modules.ControlApplication):
 		self.running = False
 
 		self.timeInterval = 10
-		self.retries_threshold = 0
+		self.retries_threshold = 10
 		self.timer = TimerEventSender(self, RRMEvaluationTimeEvent)
 		self.timer.start(self.timeInterval)
 

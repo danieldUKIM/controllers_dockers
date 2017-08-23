@@ -33,7 +33,7 @@ services:
      - "database"
     stdin_open: true
     tty: true
-    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "python3", "REM_console.py"]
+    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "/bin/bash", "-c", "tail -f /dev/null"]
     networks:
       wishrem:
         ipv4_address: 10.5.0.7
@@ -47,7 +47,7 @@ services:
      - "database"
     stdin_open: true
     tty: true
-    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "uniflex-agent", "--config", "/app/config_master.yaml"]
+    command: ["./wait-for-it.sh", "-t", "0", "database:3306", "--", "/bin/bash", "-c", "tail -f /dev/null"]
     networks:
       wishrem:
         ipv4_address: 10.5.0.3
@@ -73,7 +73,7 @@ services:
     expose:
      - "8989"
      - "8990"
-    command: ["uniflex-broker", "--xpub", "tcp://0.0.0.0:8990", "--xsub", "tcp://0.0.0.0:8989", "-v"]
+    command: ["uniflex-broker", "--xpub", "tcp://0.0.0.0:8990", "--xsub", "tcp://0.0.0.0:8989"]
     networks:
       wishrem:
         ipv4_address: 10.5.0.2
