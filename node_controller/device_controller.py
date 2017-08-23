@@ -5,8 +5,8 @@ from datetime import date, datetime, timedelta
 import time
 from uniflex.core import modules
 from uniflex.core import events
-from rem_backend.sensing_events import *
-from rem_backend.rrm_events import *
+from rem_events.sensing_events import *
+from rem_events.rrm_events import *
 #from uniflex.core.timer import TimerEventSender
 import threading
 import _thread

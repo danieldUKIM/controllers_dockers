@@ -30,6 +30,8 @@ RUN pip3 install git+https://github.com/uniflex/app_discovery_pyre@master
 
 RUN pip3 install git+https://github.com/danieldUKIM/rem_backend@master
 
+RUN pip3 install git+https://github.com/danieldUKIM/rem_events@master
+
 RUN wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
 RUN chmod +x wait-for-it.sh
 
