@@ -290,7 +290,7 @@ class DeviceController(modules.ControlApplication):
 			device_data = (event.macaddr, 2, apconf['hw_mode'], apconf['power'], apconf['ssid'], apconf['channel'], None, None)
 			if 'stations' in self.mynodes[receiver.uuid]:
 				stations = self.mynodes[receiver.uuid]['stations']
-				for staind in range(0, len(stations)-1):
+				for staind in range(0, len(stations)):
 					stamac = stations[staind]
 					if self.find_node_by_mac(stamac) is not None:
 						ssid = apconf['ssid']
