@@ -7,6 +7,10 @@ import mysql.connector
 from mysql.connector import errorcode
 import json
 
+'''
+Creates the REM database
+'''
+
 DB_NAME = 'remdb'
 
 TABLES = {}

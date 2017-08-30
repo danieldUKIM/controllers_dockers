@@ -19,8 +19,16 @@ __copyright__ = "Copyright (c) 2017, Faculty of Electrical Engineering and Infor
 __version__ = "0.1.0"
 __email__ = "{danield}@feit.ukim.edu.mk"
 
+'''
+WiFi Global DeviceController 
+The node controller (i.e. device controller) is responsible for managing the active nodes, in terms of sensing and communication. It is developed as a global controller that orchestrates all active nodes in the experiment.
+'''
+
 class DeviceController(modules.ControlApplication):
 	def __init__(self):
+		'''
+		Initialization of the global WiFi DeviceController
+		'''
 		super(DeviceController, self).__init__()
 		self.log = logging.getLogger('DeviceController')
 		self.mynodes = {}
@@ -28,6 +36,12 @@ class DeviceController(modules.ControlApplication):
 		self.running = False
 
 	def main_menu(self):
+		'''
+		The function manages the console application part of the controller.
+		Provides the user several possibilities for interacting with the experiment i.e. active WiFi devices:
+		1) It allows the user to list all active devices in the experiment. 
+		2) It allows the user to configure a specific WiFi device either as an access point, station or monitor device. 
+		'''
 		while (self.running):
 			print("Please choose from the selection:")
 			print("1. List WiFi devices")
@@ -101,6 +115,9 @@ class DeviceController(modules.ControlApplication):
 					continue
 
 	def print_nodes(self):
+		'''
+		Prints the information of all active WiFi devices: MAC address, capabilities, configuration and connection information.  
+		'''
 		print("Listing connected WIFi devices... ")
 		nodeInd = 1
 		for node in self.mynodes:
@@ -113,6 +130,9 @@ class DeviceController(modules.ControlApplication):
 			nodeInd += 1
 
 	def print_apnodes(self):
+		'''
+		Prints the information of all controlled WiFi access point: AP’s MAC address, SSID configuration and connection info   
+		'''
 		print("Listing WiFi AP devices... ")
 		nodeInd = 1
 		apindices = []
@@ -130,6 +150,9 @@ class DeviceController(modules.ControlApplication):
 
 	@modules.on_start()
 	def my_start_function(self):
+		'''
+		Starts the WiFi DeviceController   
+		'''
 		self.log.info("start global WiFi controller app")
 		self.running = True
 		mythread = threading.Thread(target=self.main_menu)
@@ -139,11 +162,17 @@ class DeviceController(modules.ControlApplication):
 
 	@modules.on_exit()
 	def my_stop_function(self):
+		'''
+		Stops the WiFi DeviceController   
+		'''
 		self.log.info("stop global WiFi controller app")
 		self.running = False
 
 	@modules.on_event(events.NewNodeEvent)
 	def add_node(self, event):
+		'''
+		Adds a new node in the active node list  
+		'''
 		node = event.node
 		#self.log.info("Added new node: {}, Local: {}".format(node.uuid, node.local))
 		self._add_node(node)
@@ -157,6 +186,9 @@ class DeviceController(modules.ControlApplication):
 	@modules.on_event(events.NodeExitEvent)
 	@modules.on_event(events.NodeLostEvent)
 	def remove_node(self, event):
+		'''
+		Removes a node from the active node list, when it stops operating  
+		'''
 		#self.log.info("Node lost".format())
 		node = event.node
 		reason = event.reason	
@@ -168,6 +200,9 @@ class DeviceController(modules.ControlApplication):
 
 	@modules.on_event(WiFiRssiSampleEvent)
 	def serve_rssi_sample_event(self, event):
+		'''
+		Handles data regarding the sensed RSSI from a WiFi device, on a given channel and stores it in the REM database  
+		'''
 		receiver = event.node
 		data = (event.ta, event.ra, event.rssi, datetime.now(), 'data', 1, event.chnel, 0)
 		insert_query.insert_rssi_measurement(data)
@@ -175,6 +210,9 @@ class DeviceController(modules.ControlApplication):
 
 	@modules.on_event(WiFiDutyCycleSampleEvent)
 	def serve_duty_cycle_sample_event(self, event):
+		'''
+		Handles data regarding the sensed duty cycle from a WiFi device on a given channel and stores it in the REM database  
+		'''
 		receiver = event.node
 		dc_data = (event.ra, event.dc*100, datetime.now(), event.chnel)
 		insert_query.insert_duty_cycle(dc_data)
@@ -182,6 +220,9 @@ class DeviceController(modules.ControlApplication):
 
 	@modules.on_event(WiFiCapabilities)
 	def serve_capabilities_event(self, event):
+		'''
+		Handles data regarding the capabilities of a WiFi device and stores it in the REM database  
+		'''
 		receiver = event.node
 		#self.log.info("WiFiCapabilities: uuid: {}, MAC: {}, capabilities: {}".format(receiver.uuid, event.macaddr, event.capabilities))
 		self.mynodes[receiver.uuid] = {}
@@ -196,22 +237,62 @@ class DeviceController(modules.ControlApplication):
 		self.setup_wifi_monitor(event.macaddr)
 
 	def setup_wifi_ap(self, macaddr, ssid, power, channel, hw_mode, ht_capab):
+		'''
+		Asks a specified active WiFi device to configure as an access point.
+		Sends a WiFiConfigureAP event to the WiFi device.
+		Args:
+			macaddr: the MAC address of the WiFi device to be configured as AP
+			ssid: the SSID of the WiFi AP
+			power: the tx power of the WiFi AP
+			channel: the channel of the WiFi AP
+			hw_mode: the hw_mode (a,b,g,n) of the WiFi AP
+			ht_capab: the ht_capab of the WiFi AP (e.g. HT40+)
+		'''
 		startap_event = WiFiConfigureAP(macaddr, ssid, power, channel, hw_mode, ht_capab)				
 		self.send_event(startap_event)
 
 	def setup_wifi_station(self, macaddr, ssid, ap, power, channel):
+		'''
+		Asks a specified active WiFi device to configure as a station.
+		Sends a WiFiConfigureStation event to the WiFi device.
+		Args:
+			macaddr: the MAC address of the WiFi device to be configured as station
+			ssid: the SSID of the WiFi AP to connect to
+			ap: the MAC address of the WiFi AP to connect to
+			power: the tx power of the WiFi station
+			channel: the channel of the WiFi AP to connect to
+		'''
 		startsta_event = WiFiConfigureStation(macaddr, ssid, ap, power, channel)				
 		self.send_event(startsta_event)
 
 	def setup_wifi_monitor(self, macaddr):
+		'''
+		Asks a specified active WiFi device to configure as a monitor device.
+		Sends a WiFiConfigureMonitor event to the WiFi device.
+		Args:
+			macaddr: the MAC address of the WiFi device to be configured as monitor device
+		'''
 		startmon_event = WiFiConfigureMonitor(macaddr)				
 		self.send_event(startmon_event)
 
 	def stop_wifi(self, macaddr):
+		'''
+		Asks a specified active WiFi device to stop all activities.
+		Sends a WiFiStopAll event to the WiFi device.
+		Args:
+			macaddr: the MAC address of the WiFi device
+		'''
 		stop_event = WiFiStopAll(macaddr)				
 		self.send_event(stop_event)
 
 	def find_node_by_mac(self, macaddr):
+		'''
+		Finds WiFi node based on its MAC address
+		Args:
+			macaddr: the MAC address of the WiFi device
+		Return: 
+			self.mynodes[node] - the node object
+		'''
 		for node in self.mynodes:
 			if self.mynodes[node]['MAC'] == macaddr:
 				return self.mynodes[node]
@@ -219,6 +300,9 @@ class DeviceController(modules.ControlApplication):
 
 	@modules.on_event(WiFiLinkStatistics)
 	def serve_linkstats_event(self, event):
+		'''
+		Handles data regarding the link between a given pair of AP and station (or vice versa) and stores it in the REM database
+		'''
 		receiver = event.node
 		txmac = event.txmac
 		rxmac = event.rxmac
@@ -239,6 +323,10 @@ class DeviceController(modules.ControlApplication):
 
 	@modules.on_event(WiFiAPStatistics)
 	def serve_apstats_event(self, event):
+		'''
+		Handles data regarding the communication status and quality between an AP and all stations that are connected to it. 
+		The information is also stored in the REM database		
+		'''
 		receiver = event.node
 		apmac = event.apmac
 		stations = event.stations
@@ -260,6 +348,10 @@ class DeviceController(modules.ControlApplication):
 
 	@modules.on_event(WiFiConfigureMonitorRsp)
 	def serve_configure_monitor_rsp_event(self, event):
+		'''
+		Handles the response from a WiFi device that was configured in monitor mode.
+		Updates the device status in the REM database		
+		'''
 		receiver = event.node
 		if receiver.uuid in self.mynodes:
 			self.mynodes[receiver.uuid]['status'] = 'monitor'
@@ -270,6 +362,10 @@ class DeviceController(modules.ControlApplication):
 		
 	@modules.on_event(WiFiConfigureStationRsp)
 	def serve_configure_station_rsp_event(self, event):
+		'''
+		Handles the response from a WiFi device that was configured as station.
+		Updates the device status in the REM database		
+		'''
 		receiver = event.node
 		apmac = event.apmac
 		staconf = event.sta_config
@@ -282,6 +378,10 @@ class DeviceController(modules.ControlApplication):
 			
 	@modules.on_event(WiFiConfigureAPRsp)
 	def serve_apconnection_rsp_event(self, event):
+		'''
+		Handles the response from a WiFi device that was configured as access point.
+		Updates the device status in the REM database		
+		'''
 		receiver = event.node
 		apconf = event.ap_config
 		if receiver.uuid in self.mynodes:
@@ -303,11 +403,18 @@ class DeviceController(modules.ControlApplication):
 
 	@modules.on_event(RRMRegister)
 	def serve_rrm_register_event(self, event):
+		'''
+		Listens for any active RRM controller in the platform and establishes connections with it.
+		Uses the registered RRM controller to (re)configure APs.		
+		'''
 		print("RRMRegister")
 		receiver = event.node
 		self.myrrm_uuid = receiver.uuid
 
 	@modules.on_event(RRMReconfigureAP)
 	def serve_rrm_reconfigure_ap_event(self, event):
+		'''
+		Receives RRM reconfiguration messages from the RRM controller and reconfigures the WiFi AP accordingly.	
+		'''
 		self.setup_wifi_ap(event.macaddr, event.ssid, event.power, event.channel, event.hw_mode, event.ht_capab)
 

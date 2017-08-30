@@ -10,6 +10,12 @@ __copyright__ = "Copyright (c) 2017, Faculty of Electrical Engineering and Infor
 __version__ = "0.1.0"
 __email__ = "{danield, valentin}@feit.ukim.edu.mk"
 
+'''
+REM console module
+Showcases the REM backend capabilities of the extension
+Used as console interface for users to interact with the platform
+'''
+
 def main():
 	run = 1;
 	while (run):

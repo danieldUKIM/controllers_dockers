@@ -16,8 +16,18 @@ __copyright__ = "Copyright (c) 2017, Faculty of Electrical Engineering and Infor
 __version__ = "0.1.0"
 __email__ = "{danield, valentin}@feit.ukim.edu.mk"
 
+'''
+Simple RRM global controller for WISH-I-VE-A-REM 
+Connects to node controller to provide RRM functionalities
+Uses REM backend to find and allocate channels to APs
+'''
+
 class RRMController(modules.ControlApplication):
 	def __init__(self):
+		'''
+		Initialization of the simple RRM global controller
+		Starts a timer event for reevaluation of RRM allocations.
+		'''
 		super(RRMController, self).__init__()
 		self.log = logging.getLogger('RRMController')
 		self.running = False
@@ -28,6 +38,14 @@ class RRMController(modules.ControlApplication):
 		self.timer.start(self.timeInterval)
 
 	def reconfigure_ap(self, apmac):
+		'''
+		If there are available channels, the controller calculates the duty cycle at the AP location of the for all channels.
+		The RRM controller allocates the AP to the channel with the lowest duty cycle value, i.e. lowest activity.
+		If all channels are occupied by active access points, the RRM controller allocates the channel with least active APs.
+		Sends RRMReconfigureAP to the node controller to (re)configure the AP.
+		Args:
+			apmac: the MAC address of the access point		
+		'''
 		dev = qd.get_device(apmac)
 		if dev is not None:
 			chan_capab = json.loads(dev['chan_capab'])		
@@ -100,17 +118,27 @@ class RRMController(modules.ControlApplication):
 
 	@modules.on_start()
 	def my_start_function(self):
+		'''
+		Starts the RRM controller module		
+		'''
 		self.log.info("start RRM control app")
 		self.running = True
 
 	@modules.on_exit()
 	def my_stop_function(self):
+		'''
+		Stops the RRM controller module		
+		'''
 		self.log.info("stop RRM control app")
 		self.running = False
 		self.timer.cancel()
 
 	@modules.on_event(WiFiGetCapabilities)
 	def serve_get_capabilities(self, event):
+		'''
+		Handles the WiFiGetCapabilities event.
+		Sends RRMRegister event to the node controller to register.
+		'''
 		node = self.localNode
 		if (node.uuid == event.receiverUuid):
 			try:
@@ -121,11 +149,20 @@ class RRMController(modules.ControlApplication):
 
 	@modules.on_event(RRMRequestAPConfiguration)
 	def serve_request_ap_config(self, event):
+		'''
+		Handles the RRMRequestAPConfiguration event.
+		Calls self.reconfigure_ap to reconfigure the AP with MAC address event.macaddr.
+		'''
 		node = self.localNode
 		self.reconfigure_ap(event.macaddr)
 
 	@modules.on_event(RRMEvaluationTimeEvent)
 	def periodic_evaluation(self, event):
+		'''
+		Handles the RRMEvaluationTimeEvent event.
+		Calculates the AP statistics and finds out degraded APs based on transmission retries.
+		Reconfigures APs if degraded using the self.reconfigure_ap function.
+		'''
 		self.log.info("Periodic RRM Evaluation")
 		timeMinutes = self.timeInterval/60
 		results = qd.get_ap_statistics(timeMinutes)

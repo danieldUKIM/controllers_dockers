@@ -13,6 +13,10 @@ __copyright__ = "Copyright (c) 2017, Faculty of Electrical Engineering and Infor
 __version__ = "0.1.0"
 __email__ = "{danield, valentin}@feit.ukim.edu.mk"
 
+'''
+Fills the REM data based with device with the predifined device locations, from configuration file.
+'''
+
 with open('device_locations.txt', 'r') as myfile:
 	data=myfile.read()
 	obj = json.loads(data)
