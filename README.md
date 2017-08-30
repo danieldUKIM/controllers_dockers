@@ -30,7 +30,7 @@ Running examples
 
 1. Uniflex broker init
 	
-	uniflex-broker
+	sudo uniflex-broker --xpub tcp://0.0.0.0:8990 --xsub tcp://0.0.0.0:8989
 
 2. Node initialization:
 
@@ -40,12 +40,18 @@ Running examples
 3. Node controller:
 
         cd node_controller/
-        uniflex-agent --config ./config_master.yaml
+
+Change IP address of sub and pub to be the IP address of the broker 
+
+        sudo uniflex-agent --config ./config_master.yaml
 
 4. RRM controller:
 
         cd rrm_controller/
-        uniflex-agent --config ./config_rrm.yaml
+
+Change IP address of sub and pub to be the IP address of the broker 
+
+        sudo uniflex-agent --config ./config_rrm.yaml
 
 4. REM console:
 
