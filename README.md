@@ -1,9 +1,6 @@
 Global controllers and docker files
 ============================
 
-User Installation (no Github rights needed)
-====================================
-
 Download from GitHub
 ====================================
 
@@ -25,21 +22,7 @@ When installing mysql, select to use as root with password "rem"
 Installation
 ============
 
-1. Create virtual environment:
-
-        virtualenv -p /usr/bin/python3 ./dev
-
-2. Activate virtual environment:
-
-        source ./dev/bin/activate
-
-3. Install all dependencies (if all needed):
-
         pip3 install -r requirements.txt
-
-4. Deactivate virtual environment (if you need to exit):
-
-        deactivate
 
 
 Running examples
